@@ -1,3 +1,5 @@
+library(dplyr)
+
 ## READING DATA
 
 actLabels <- read.table("UCI HAR Dataset/activity_labels.txt")
@@ -16,32 +18,30 @@ Ytrain <- read.table("UCI HAR Dataset/train/y_train.txt")
 
 mergedXData <- rbind(Xtest, Xtrain)
 mergedLabels <- rbind(Ytest, Ytrain)
-mergedData <- cbind(mergedXData, mergedLabels)
 mergedSubj <- rbind(subjTest, subjTrain)
-mergedData <- cbind(mergedData, mergedSubj)
 
-## PROPERLY NAMING FEATURES
-
-colnames(mergedData) <- c(as.character(f), "actLabel", "subject")
-
+colnames(mergedXData) <- features$V2 ## PROPERLY NAMING FEATURES
 
 ## EXTRACTING ONLY THE MEASUREMENTS ON THE MEAN AND STANDARD DEVIATION
 
-meanData <- mergedData[grep("mean()", names(mergedData), fixed = TRUE)]
-stdData <- mergedData[grep("std()", names(mergedData), fixed = TRUE)]
+meanData <- mergedXData[grep("mean()", names(mergedXData), fixed = TRUE)]
+stdData <- mergedXData[grep("std()", names(mergedXData), fixed = TRUE)]
 
-## MERGING RESULTS
+## ADDING ACTIVITY LABELS COLUMN AND SUBJECT COLUMN
+## FORMING FINAL DATASET
 
-finalData <- cbind(meanData, stdData, mergedData$actLabel, mergedData$subject)
+finalData <- cbind(meanData, stdData, mergedLabels, mergedSubj)
 names(finalData)[(ncol(finalData)-1):ncol(finalData)] <- c("actLabel", "subject")
 
- ## PROPERLY NAMING ACTIVITY LABELS
+## PROPERLY NAMING ACTIVITY LABELS
 
 finalData["actLabel"] <- actLabels[finalData$actLabel, "V2"]
 
- 
 ## CREATING INDEPENDENT MEAN DATASET
 
 avg_finalData <- group_by(finalData, subject, actLabel) %>% summarise_each(c("mean"))
-write.table(avg_finalData, file = "avg-tidy-dataset.txt")
+
+## SAVING FINAL TABLE TO FILE 
+
+write.table(avg_finalData, file = "avg-tidy-table.txt")
 
