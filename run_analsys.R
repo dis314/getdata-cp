@@ -43,5 +43,5 @@ avg_finalData <- group_by(finalData, subject, actLabel) %>% summarise_each(c("me
 
 ## SAVING FINAL TABLE TO FILE 
 
-write.table(avg_finalData, file = "avg-tidy-table.txt")
+write.table(avg_finalData, file = "avg-tidy-table.txt", row.name = FALSE)
 
