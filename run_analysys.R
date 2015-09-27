@@ -39,7 +39,9 @@ finalData["actLabel"] <- actLabels[finalData$actLabel, "V2"]
 
 ## CREATING INDEPENDENT MEAN DATASET
 
-avg_finalData <- group_by(finalData, subject, actLabel) %>% summarise_each(c("mean"))
+# grouping by subject and actLabel and applying "mean" function to rest of the columns
+
+avg_finalData <- group_by(finalData, subject, actLabel) %>% summarise_each(c("mean")) 
 
 ## SAVING FINAL TABLE TO FILE 
 
